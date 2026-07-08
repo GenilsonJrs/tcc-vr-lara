@@ -1,0 +1,121 @@
+\chapter{Diagnóstico Consolidado}
+\label{cap:diagnostico}
+
+Os dois estudos de caso, embora distintos em domínio e em estado de atividade, convergem
+para um mesmo conjunto de limitações de Engenharia de Software. Este capítulo consolida os
+problemas \emph{comuns} a ambos, tratando-os de forma unificada. Começa-se pela organização
+do versionamento (Seção~\ref{sec:diag-git}), passa-se à documentação e à reprodutibilidade
+(Seção~\ref{sec:diag-doc}) e à arquitetura e ao acoplamento (Seção~\ref{sec:diag-arq}), e
+encerra-se com uma síntese da lacuna entre o registrado e o montado
+(Seção~\ref{sec:diag-lacuna}).
+
+\section{Organização do Versionamento e dos Repositórios}
+\label{sec:diag-git}
+
+A inspeção da organização \texttt{lara-unb} no GitHub revela um quadro heterogêneo: há
+repositórios cuidados e repositórios negligenciados, sem uma política uniforme que os
+distinga. Os principais achados são:
+
+\begin{itemize}
+	\item \textbf{Fragmentação da mesma linha de trabalho:} um mesmo sistema pode existir em
+	      múltiplos repositórios que representam gerações tecnológicas distintas. O caso mais
+	      ilustrativo é o do ciclismo com FES, cuja implementação original em ROS~1
+	      (\texttt{ema\_fes\_cycling}, público e documentado) coexiste com a reescrita ativa
+	      em ROS~2 (\texttt{ema\_fes\_ros2}, privado e praticamente sem documentação), sem que
+	      a relação entre ambos esteja explicitada.
+	\item \textbf{Dispersão do ecossistema:} os subsistemas do Projeto EMA distribuem-se por
+	      mais de uma dezena de repositórios de nomes pouco padronizados, agrupando análise
+	      de movimento, estimulação, sensores, botões e mensagens sem uma convenção que
+	      comunique a sua relação e o seu estado (ativo ou arquivado).
+	\item \textbf{Higiene de repositório desigual:} embora a maioria dos repositórios possua
+	      \texttt{README} --- em uma amostragem de 89 repositórios da organização, 77
+	      dispunham de algum \texttt{README} ---, a sua qualidade é irregular, e justamente
+	      alguns dos artefatos mais relevantes carecem de documentação adequada: é o caso do
+	      sistema de realidade virtual (\texttt{ema\_vr\_rehab}, sem \texttt{README}), da
+	      reescrita ativa do ciclismo (\texttt{ema\_fes\_ros2}, com \texttt{README} mínimo) e
+	      de diversos módulos de baixo nível (drivers de IMU, de estimulador e de sensor de
+	      força, entre outros, sem \texttt{README}).
+	\item \textbf{Padronização inconsistente de metadados:} a definição de licença, de
+	      descrição e o uso de recursos como \emph{releases} variam de repositório para
+	      repositório --- alguns, como o \texttt{ema\_fes\_cycling}, adotam licença explícita
+	      e versões marcadas, enquanto outros, inclusive os ativos, não trazem licença nem
+	      descrição.
+\end{itemize}
+
+O efeito combinado desses fatores é a perda de rastreabilidade: torna-se difícil, mesmo para
+um integrante experiente, determinar qual repositório contém a versão vigente de um sistema,
+qual o seu estado e como executá-lo. Trata-se, paradoxalmente, de um dos problemas mais
+custosos e, ao mesmo tempo, dos mais simples de mitigar com convenções básicas.
+
+\section{Documentação e Reprodutibilidade}
+\label{sec:diag-doc}
+
+Mais do que a mera presença de um \texttt{README}, o que os dois casos revelam é uma
+\emph{insuficiência de documentação orientada à reprodução}, concentrada precisamente nos
+artefatos ativos. Nenhum dos dois sistemas, na sua geração vigente, oferece o conjunto
+mínimo que permitiria a um novo integrante instalá-lo e executá-lo de forma autônoma:
+faltam guias de instalação atualizados, especificação de dependências e de ambiente e passo
+a passo de execução. É sintomático que, no caso do ciclismo, a documentação existente esteja
+associada à geração \emph{anterior} (ROS~1), ao passo que a geração \emph{ativa} (ROS~2)
+--- aquela que um novo integrante de fato utilizaria --- seja a desprovida de guias. Como
+registrado nos Capítulos~\ref{cap:caso-vr} e \ref{cap:caso-trike}, a tentativa de reprodução
+esbarra sistematicamente em conhecimento tácito não registrado --- versões de \emph{engine},
+lógica embarcada em \emph{Blueprints}, imagens de contêiner inexistentes, parâmetros de
+inicialização e detalhes de infraestrutura. O resultado é uma \emph{reprodutibilidade
+comprometida}: o objetivo de que um novo integrante consiga, a partir do acesso ao
+repositório, colocar o sistema em funcionamento não é hoje atingível sem esforço
+considerável de engenharia reversa.
+
+\section{Arquitetura e Acoplamento}
+\label{sec:diag-arq}
+
+Ambos os sistemas exibem forte acoplamento entre a lógica de aquisição de dados e a lógica
+de interface, ainda que com naturezas distintas. No caso da RV, o acoplamento manifesta-se
+na incorporação da lógica de aquisição à própria \emph{game engine}, com parte substancial
+embarcada em \emph{Blueprints} binários; no caso do ciclismo, na hierarquia de inicialização
+que impede a execução isolada de nós. Em ambos, o acoplamento eleva o custo de evolução e
+dificulta a substituição de componentes e a depuração. Reconhece-se, contudo, uma assimetria
+favorável ao sistema de ciclismo: por apoiar-se no ROS~2 e no seu modelo de nós e tópicos
+(Seção~\ref{sec:ros}), ele já dispõe de uma base arquitetural modular sobre a qual o
+desacoplamento pode ser construído --- desde que a rigidez da inicialização seja tratada.
+
+\section{Síntese: a Lacuna entre o Registrado e o Montado}
+\label{sec:diag-lacuna}
+
+O fio condutor do diagnóstico é a distância entre aquilo que está \emph{registrado} ---
+em artigos, diagramas e trabalhos anteriores --- e aquilo que está de fato \emph{montado e
+em operação}. Essa lacuna assume três formas recorrentes: (i) \emph{documentação ausente ou
+desatualizada}, quando não há registro do que existe hoje, ou quando o registro se refere a
+uma geração anterior; (ii) \emph{documentação incompleta ou incoerente}, quando o registro
+existe mas não corresponde ao sistema real --- como no diagrama que omite o \emph{display}
+conectado ao microcontrolador; e (iii) \emph{código ausente}, quando o próprio artefato de
+software que deveria existir não é encontrado --- como o código da HMI do sistema de
+ciclismo. A Tabela~\ref{tab:diagnostico} sintetiza os achados por estudo de caso.
+
+\begin{table}[H]
+	\centering
+	\caption{Síntese das limitações identificadas por estudo de caso.}
+	\label{tab:diagnostico}
+	\begin{tabular}{p{6.2cm} c c}
+		\hline
+		\textbf{Limitação} & \textbf{RV} & \textbf{Ciclismo (FES)} \\
+		\hline
+		Documentação de instalação insuficiente (repositório ativo) & Sim & Sim \\
+		Fragmentação/inconsistência no versionamento & Sim & Sim \\
+		Acoplamento entre aquisição e interface & Sim & Sim \\
+		Reprodutibilidade comprometida & Sim & Sim \\
+		Lógica central em artefatos binários (\emph{Blueprints}) & Sim & --- \\
+		Dependência de tecnologia descontinuada (HTC Vive) & Sim & --- \\
+		Código-fonte ausente (HMI) & --- & Sim \\
+		Diagrama incoerente com o hardware & \emph{a verificar} & Sim \\
+		Infraestrutura não documentada (servidor) & --- & Sim \\
+		\hline
+	\end{tabular}
+
+	\vspace{4pt}
+	{\footnotesize Fonte: elaborado pelos autores.}
+\end{table}
+
+Esse mapeamento fundamenta as recomendações apresentadas no capítulo seguinte, cuja lógica
+é atacar primeiro as limitações mais básicas e de maior alcance --- versionamento e
+documentação --- antes das intervenções estruturais mais profundas.
