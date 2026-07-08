@@ -1,0 +1,88 @@
+\chapter{Metodologia}
+\label{cap:metodologia}
+
+Este capítulo descreve a abordagem metodológica adotada para investigar os sistemas do
+Projeto EMA. A estratégia central é deliberadamente simples e reproduzível: assumir a
+perspectiva de um novo integrante --- ou de um consultor de Engenharia de Software --- que,
+ao chegar ao laboratório, recebe acesso aos repositórios e à infraestrutura e se propõe a
+\emph{colocar os sistemas para funcionar tal como se encontram}, registrando
+sistematicamente cada obstáculo, lacuna e incoerência encontrados no caminho.
+
+\section{Natureza e Abordagem da Pesquisa}
+
+Quanto à sua natureza, este trabalho caracteriza-se como uma \emph{pesquisa aplicada}, pois
+se volta à solução de um problema concreto de um contexto real. Quanto aos objetivos, é
+\emph{exploratória}, uma vez que busca reconstruir e compreender sistemas pouco
+documentados. Quanto à abordagem, é predominantemente \emph{qualitativa}, apoiada na análise
+documental, na leitura de código e na observação direta do hardware e das tentativas de
+execução. A unidade de análise são os dois estudos de caso descritos na
+Seção~\ref{sec:estudos-de-caso}, tratados segundo a lógica de \emph{estudo de caso múltiplo}:
+cada sistema é investigado em profundidade e, ao final, os achados são confrontados para
+distinguir o que é específico de cada um do que é comum a ambos.
+
+\section{A Postura de Consultoria}
+
+A escolha de uma postura de consultoria orienta todas as etapas seguintes e tem uma
+consequência metodológica importante: o valor da investigação não está apenas no que
+\emph{funciona}, mas sobretudo no que \emph{falha}. Cada dificuldade encontrada ao tentar
+reproduzir um sistema --- um comando que não executa, um arquivo ausente, um diagrama que
+não corresponde ao hardware --- é tratada como um \emph{dado}, e não como um contratempo a
+ser silenciosamente contornado. Essa inversão de perspectiva é o que transforma a
+frustração de ``o projeto não roda'' em um diagnóstico estruturado e acionável. Pergunta-se,
+a cada passo: \emph{o que um novo integrante encontraria aqui, e o que lhe faltaria?}
+
+\section{Fases da Investigação}
+
+O trabalho foi organizado nas seguintes fases metodológicas, aplicadas a cada estudo de
+caso:
+
+\begin{enumerate}
+	\item \textbf{Revisão bibliográfica.} Levantamento e leitura crítica da literatura
+	      sobre boas práticas de Engenharia de Software (refatoração, documentação,
+	      versionamento, arquitetura baseada em componentes) e sobre o domínio de aplicação
+	      (reabilitação, RV, FES, sensoriamento inercial), consolidados no
+	      Capítulo~\ref{cap:fundamentacao}.
+	\item \textbf{Levantamento documental.} Exame do que está \emph{registrado} sobre cada
+	      sistema: trabalhos acadêmicos anteriores, diagramas, artigos e o conteúdo dos
+	      repositórios. Dessa etapa resulta o retrato de como o sistema \emph{deveria} ser,
+	      segundo a documentação disponível.
+	\item \textbf{Tentativa de reprodução.} Clonagem dos repositórios e tentativa de
+	      instalar e executar os sistemas tal como se encontram, na infraestrutura do
+	      laboratório e em plataformas de teste. Cada obstáculo é registrado com precisão
+	      (comando, mensagem de erro, causa provável).
+	\item \textbf{Análise de código e engenharia reversa.} Leitura do código-fonte para
+	      reconstruir a arquitetura efetivamente implementada (\emph{as-is}): componentes,
+	      nós, tópicos, fluxos de dados e pontos de acoplamento.
+	\item \textbf{Confronto entre o registrado e o montado.} Comparação sistemática entre a
+	      arquitetura documentada e a arquitetura implementada, e entre o hardware
+	      diagramado e o hardware fisicamente montado, com o objetivo de mapear lacunas e
+	      incoerências.
+	\item \textbf{Modelagem e diagramação.} Representação padronizada das arquiteturas por
+	      meio de diagramas coerentes com o que foi efetivamente observado, corrigindo ou
+	      completando os diagramas preexistentes quando necessário.
+	\item \textbf{Diagnóstico e proposta.} Síntese das limitações identificadas ---
+	      específicas e comuns --- e elaboração de recomendações e de um caminho de
+	      reestruturação, apresentados nos Capítulos~\ref{cap:diagnostico} e
+	      \ref{cap:proposta}.
+\end{enumerate}
+
+\section{Instrumentos e Fontes de Dados}
+
+As fontes de dados incluem: os repositórios da organização \texttt{lara-unb} no GitHub; os
+trabalhos acadêmicos de referência que documentam cada sistema
+\cite{balbino2020,brindeiro2017,baptista2022}; a infraestrutura física do laboratório
+(estações de trabalho, dispositivos de RV, triciclo, estimuladores e sensores); e o
+registro das tentativas de execução. Os instrumentos de análise compreendem a inspeção de
+repositórios sob os critérios de boas práticas (presença de \texttt{README}, licença,
+histórico de \emph{commits}, organização e nomenclatura), a leitura de código-fonte e a
+diagramação da arquitetura.
+
+\section{Delimitação do Escopo}
+
+Cabe delimitar o alcance desta etapa. Consoante o caráter preparatório de um primeiro
+trabalho de conclusão de curso, o escopo aqui é o de \emph{diagnóstico, documentação e
+proposta} --- e não o da implementação e validação experimental das soluções, reservadas à
+etapa subsequente. Reconhece-se, ademais, que o prazo de execução não permite a reprodução
+integral de sistemas cuja documentação é ausente ou incompleta; essa própria
+impossibilidade, contudo, é um dos resultados diagnósticos do trabalho, e não uma limitação
+a ser omitida.

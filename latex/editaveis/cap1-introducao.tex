@@ -3,222 +3,235 @@
 
 \section{Contextualização}
 
-A reabilitação motora de pessoas que perderam parcial ou totalmente a capacidade
-de locomoção é um dos grandes desafios contemporâneos da área da saúde. Condições
-neurológicas como o acidente vascular cerebral (AVC) e a lesão medular figuram entre
-as principais causas de incapacidade física de longo prazo, comprometendo a marcha,
-a independência e a qualidade de vida dos indivíduos acometidos. O AVC, em particular,
-constitui uma das principais causas de incapacidade no mundo, e os custos anuais
-associados ao cuidado pós-AVC --- incluindo a reabilitação --- são estimados entre
-40 e 60 mil dólares por paciente em países de alta renda \cite{rajashekar2024}.
-Paralelamente, o envelhecimento populacional acentua a prevalência de disfunções
-neuromusculoesqueléticas, que se manifestam como perda de força muscular, distúrbios
-de equilíbrio e comprometimento da marcha, ampliando a demanda por terapias de
-reabilitação eficazes \cite{loureiro2024}.
+A reabilitação motora de pessoas que perderam, parcial ou totalmente, a capacidade de
+locomoção é um dos grandes desafios contemporâneos da área da saúde. Condições
+neurológicas como o acidente vascular cerebral (AVC) e a lesão medular figuram entre as
+principais causas de incapacidade física de longo prazo, comprometendo a marcha, a
+independência e a qualidade de vida dos indivíduos acometidos \cite{rajashekar2024}. Há um
+consenso crescente de que a recuperação funcional depende de treinamento motor
+\emph{intensivo, repetitivo e engajador}, capaz de estimular os mecanismos de
+reorganização do sistema nervoso \cite{loureiro2024}. É nesse contexto que tecnologias
+assistivas como a robótica de reabilitação, a eletroestimulação funcional (FES) e a
+realidade virtual (RV) vêm sendo progressivamente incorporadas à prática clínica e à
+pesquisa acadêmica.
 
-Há um consenso crescente de que a recuperação funcional depende de treinamento
-motor \emph{intensivo, repetitivo e engajador}, capaz de estimular os mecanismos de
-reorganização do sistema nervoso \cite{rajashekar2024}. As abordagens convencionais,
-contudo, esbarram em limitações práticas: dependem de equipes multidisciplinares,
-exigem grande número de repetições e frequentemente carecem de elementos que sustentem
-a motivação e a adesão do paciente ao longo de um tratamento prolongado. É nesse vácuo
-que tecnologias assistivas como a robótica de reabilitação, a eletroestimulação
-funcional (FES) e a realidade virtual (RV) têm sido progressivamente incorporadas à
-prática clínica.
+No Brasil, uma das iniciativas de referência nessa frente é o \textbf{Projeto EMA},
+conduzido no Laboratório de Automação e Robótica (LARA) da Universidade de Brasília (UnB).
+O projeto investiga o uso da eletroestimulação funcional integrada a dispositivos
+robóticos --- como triciclos, esteiras, equipamentos de remo e andadores --- para a
+reabilitação motora e cardiovascular de pessoas com lesão nos membros inferiores. Ao longo
+de anos, sucessivas gerações de estudantes de graduação e pós-graduação
+desenvolveram, nesse ecossistema, uma coleção de subsistemas de hardware e software: nós
+de controle de estimuladores, drivers de sensores inerciais, interfaces de operação,
+ambientes virtuais imersivos e ferramentas de aquisição e análise de dados. A
+Figura~\ref{fig:ecossistema} apresenta uma visão geral desse ecossistema e situa os dois
+subsistemas examinados neste trabalho.
 
-A realidade virtual, em especial, vem se consolidando como ferramenta promissora na
-reabilitação neuromotora. Ao imergir o paciente em ambientes interativos e
-individualizados, sistemas baseados em RV ampliam a motivação durante as tarefas
-motoras e favorecem o aprendizado por meio de informação sensorial multimodal, com
-efeitos positivos relatados em diversas condições neurológicas
-\cite{macchitella2023,ferreiradossantos2016}. Um elemento central dessas intervenções
-é a \emph{visualização do movimento} --- a forma como o sistema apresenta ao usuário,
-no ambiente virtual, o seu próprio movimento, seja por meio de um avatar, de realidade
-aumentada ou de outras estratégias de representação \cite{ferreiradossantos2016}. Quando
-combinada a dispositivos robóticos e à FES, a RV mostra potencial para melhorar
-desfechos clínicos sem comprometer o desempenho cinemático da marcha
-\cite{loureiro2024}. Em casos extremos, protocolos que associaram treinamento imersivo
-em RV, realimentação tátil e exoesqueletos controlados por interface cérebro-máquina
-chegaram a induzir recuperação neurológica parcial em pacientes paraplégicos crônicos
-\cite{donati2016}, evidenciando o alcance terapêutico dessa classe de tecnologias.
+\begin{figure}[H]
+	\centering
+	\caption{Visão geral do ecossistema do Projeto EMA e os dois estudos de caso deste trabalho.}
+	\label{fig:ecossistema}
+	\vspace{6pt}
+	\begin{tikzpicture}[
+		font=\small,
+		bloco/.style={draw, rounded corners, align=center, inner sep=5pt, minimum height=0.95cm, minimum width=2.7cm},
+		nucleo/.style={draw, rounded corners, align=center, inner sep=6pt, fill=black!8, minimum height=1cm, minimum width=3.4cm},
+		caso/.style={draw, very thick, rounded corners, align=center, inner sep=5pt, minimum height=0.95cm, minimum width=2.7cm},
+		]
+		\node[nucleo] (ema) {Projeto EMA\\(FES + Robótica de\\Reabilitação --- LARA/UnB)};
+		\node[caso, below=1.5cm of ema, xshift=-4.6cm] (trike) {Ciclismo com FES\\(\emph{trike})};
+		\node[caso, below=1.5cm of ema, xshift=4.6cm] (vr) {Realidade Virtual\\(avatar imersivo)};
+		\node[bloco, below=1.5cm of ema, xshift=-0.0cm, yshift=0.0cm, minimum width=3.1cm] (outros) {Remo, esteira,\\andador etc.};
+		\node[bloco, below=1.2cm of trike] (hwt) {Estimulador, IMUs,\\Raspberry Pi, HMI};
+		\node[bloco, below=1.2cm of vr] (hwv) {HMD, IMUs,\\\emph{game engine}};
+		\foreach \n in {trike,outros,vr}{\draw[-{Latex[length=2mm]}] (ema.south) -- (\n.north);}
+		\draw[-{Latex[length=2mm]}] (trike.south) -- (hwt.north);
+		\draw[-{Latex[length=2mm]}] (vr.south) -- (hwv.north);
+	\end{tikzpicture}
 
-É nesse cenário que se insere o \textbf{Projeto EMA}, conduzido no Laboratório de
-Automação e Robótica (LARA) da Universidade de Brasília (UnB). O projeto investiga o uso
-da eletroestimulação funcional integrada a dispositivos robóticos --- como triciclos,
-esteiras e andadores --- para a reabilitação motora e cardiovascular de pessoas com
-lesão nos membros inferiores. Dentro desse ecossistema, um sistema de realidade virtual
-imersivo foi desenvolvido para capturar o movimento do paciente por meio de sensores
-inerciais (IMUs) e reproduzi-lo em tempo real em um avatar virtual, fornecendo
-realimentação visual capaz de aumentar a imersão, o engajamento e a motivação durante
-as sessões de terapia \cite{balbino2020}. Esse sistema constitui a base tecnológica
-sobre a qual o presente trabalho se debruça.
+	\vspace{4pt}
+	{\footnotesize Fonte: elaborado pelos autores.}
+\end{figure}
 
-Mais recentemente, o LARA tem buscado evoluir essa frente em cooperação com a
-Universidade Federal do Espírito Santo (UFES), cujo grupo de pesquisa acumula
-experiência consolidada no desenvolvimento de andadores inteligentes (\emph{smart
-walkers}) e ambientes de realidade mista para suporte à marcha
-\cite{machado2024,loureiro2024}, bem como em metodologias de engenharia para o
-desenvolvimento de sistemas robóticos de reabilitação \cite{bezerra2025}. Essa
-aproximação aponta para um horizonte de padronização tecnológica e de integração entre
-o ambiente virtual, o andador robótico, a esteira e a FES --- um sistema no qual o
-mundo virtual reage aos movimentos reais executados pelo paciente. Concretizar essa
-integração, entretanto, exige antes compreender, documentar e reestruturar o sistema de
-realidade virtual já existente, tarefa que motiva e delimita este Trabalho de Conclusão
-de Curso.
+Do ponto de vista da funcionalidade, muitos desses subsistemas cumpriram --- e alguns
+ainda cumprem --- o seu propósito de pesquisa: chegaram a funcionar, geraram resultados e
+sustentaram publicações. Entretanto, quando observados sob a ótica da
+\emph{Engenharia de Software}, revelam um conjunto recorrente de fragilidades que
+compromete a sua continuidade: arquiteturas monolíticas e fortemente acopladas, ausência
+de documentação técnica e de guias de instalação, código sem padronização, repositórios de
+versionamento desorganizados e uma lacuna sistemática entre aquilo que está
+\emph{registrado} (em artigos, diagramas e trabalhos anteriores) e aquilo que está de fato
+\emph{montado e em operação} no laboratório. O resultado é que cada novo integrante que
+chega ao grupo enfrenta uma curva de reaproveitamento custosa, muitas vezes tendo de
+reconstruir, por tentativa e erro, conhecimento que deveria estar documentado.
+
+É precisamente esse o objeto deste Trabalho de Conclusão de Curso. Diferentemente de um
+trabalho voltado a criar uma nova funcionalidade, a contribuição aqui proposta é de
+natureza metodológica e diagnóstica: aplicar o instrumental da Engenharia de Software para
+\emph{compreender, documentar, diagramar e diagnosticar} o estado atual dos sistemas do
+Projeto EMA, apontando as suas limitações e propondo o caminho para que evoluam de
+protótipos de pesquisa frágeis para uma base de software sustentável. Para dar concretude a
+essa investigação, o trabalho organiza-se em torno de \textbf{dois estudos de caso}
+complementares, que representam dois estágios distintos de maturidade dentro do mesmo
+ecossistema.
+
+\section{Os Dois Estudos de Caso}
+\label{sec:estudos-de-caso}
+
+O trabalho é desenvolvido em dupla e articula duas frentes que compartilham o mesmo
+laboratório, o mesmo orientador e os mesmos problemas estruturais de Engenharia de
+Software, mas que se encontram em estágios opostos do ciclo de vida:
+
+\begin{itemize}
+	\item \textbf{Estudo de caso A --- Realidade Virtual.} O sistema de RV imersivo
+	      desenvolvido para capturar o movimento do paciente por sensores inerciais e
+	      reproduzi-lo, em tempo real, em um avatar virtual \cite{balbino2020}. Trata-se de
+	      um sistema cujo último desenvolvimento registrado no repositório data de 2019 e que
+	      se encontra inativo desde então; o seu desafio central é a \emph{reativação}:
+	      recuperar, a partir do que está registrado, um sistema que já funcionou,
+	      identificando o que falta para colocá-lo novamente em operação. Por envolver menos
+	      componentes de hardware, é o caso de mais rápida retomada.
+	\item \textbf{Estudo de caso B --- Ciclismo com Eletroestimulação Funcional (FES
+	      \emph{Cycling}).} O sistema de controle da \emph{trike} assistida por
+	      eletroestimulação, no qual sensores inerciais capturam a posição dos pedais e
+	      comandam os estimuladores que produzem o movimento de pedalada
+	      \cite{brindeiro2017,baptista2022}. Diferentemente do caso anterior, é um sistema
+	      \emph{ativo}, com equipe trabalhando sobre ele, porém marcado por documentação
+	      ausente e por dificuldades de reprodução. Por envolver mais componentes de
+	      hardware, é o caso de diagnóstico mais complexo.
+\end{itemize}
+
+A escolha por dois casos em estágios distintos é deliberada: permite contrastar os
+problemas de Engenharia de Software que surgem quando um sistema é \emph{abandonado} com
+aqueles que persistem mesmo quando ele está \emph{ativo}, revelando que a fragilidade
+estrutural independe do estado de atividade do projeto. Ao longo do texto, os problemas
+específicos de cada caso são tratados em capítulos próprios, enquanto os problemas comuns
+--- notadamente os relativos ao versionamento e à documentação --- são consolidados em um
+diagnóstico conjunto.
 
 \section{Problema de Pesquisa}
+\label{sec:problema}
 
-O sistema de realidade virtual desenvolvido no âmbito do Projeto EMA cumpriu seu
-propósito inicial como prova de conceito: demonstrou ser possível capturar o movimento
-do paciente por sensores inerciais e reproduzi-lo, em tempo real, em um avatar imersivo
-que oferece realimentação visual durante a terapia. Entretanto, ao evoluir de uma prova
-de conceito para um sistema que se pretende integrar a um conjunto mais amplo de
-dispositivos --- andador robótico, esteira e eletroestimulação funcional ---, tornam-se
-evidentes limitações de natureza arquitetural que comprometem a sua manutenção,
-evolução e portabilidade.
+Os sistemas do Projeto EMA foram concebidos, em sua maioria, como provas de conceito
+orientadas a demonstrar viabilidade técnica e a sustentar investigações científicas
+pontuais. Cumprido esse objetivo imediato, tais sistemas raramente receberam o tratamento
+de engenharia necessário para que se tornassem artefatos reutilizáveis: faltam-lhes
+documentação, padronização, modularidade e uma organização de versionamento que preserve o
+conhecimento produzido. O maior gargalo do laboratório, portanto, não está na ausência de
+funcionalidade, mas na \emph{forma como o software está estruturado, documentado e
+versionado}.
 
-O sistema legado caracteriza-se por uma arquitetura \emph{monolítica e fortemente
-acoplada}: a lógica de aquisição e tratamento dos dados de hardware (sensores inerciais
-e eletroestimulação) encontra-se entrelaçada à lógica de interface e renderização
-gráfica, embarcada diretamente na \emph{engine} de jogo utilizada. Esse acoplamento faz
-com que decisões pertencentes a um domínio --- por exemplo, a troca do óculos de
-realidade virtual ou da própria \emph{engine} --- repercutam sobre componentes que
-deveriam ser independentes, elevando o custo de qualquer modificação. Soma-se a isso a
-\emph{ausência de documentação} e de padronização: o código carece de registros de
-arquitetura, de guias de instalação e de convenções que permitam a um novo membro do
-laboratório compreendê-lo e dar-lhe continuidade. A camada de comunicação entre o
-\emph{middleware} robótico e a \emph{engine}, por sua vez, mostra-se frágil e ainda em
-caráter experimental, o que ameaça os requisitos de tempo real exigidos pela aplicação.
-
-Esse cenário é agravado por um contexto de \emph{transição tecnológica}. O sistema
-legado foi construído sobre uma geração de hardware de realidade virtual já
-descontinuada e sobre uma versão de \emph{middleware} distinta daquela adotada como
-padrão pelos grupos de pesquisa parceiros. A pretendida migração para um novo conjunto
-de hardware e software --- e a integração com o ecossistema do andador robótico ---
-encontra, portanto, um obstáculo anterior à própria implementação: a inexistência de
-uma arquitetura clara, documentada e desacoplada que sirva de alicerce para essa
-evolução.
+Esse cenário produz uma consequência prática mensurável: a dificuldade de
+\emph{reprodutibilidade}. Confrontado com um repositório do laboratório, um novo integrante
+--- ainda que tecnicamente competente --- não encontra os elementos mínimos que a boa
+prática de Engenharia de Software prescreve para que um sistema possa ser instalado,
+executado e compreendido: um \emph{README} com passo a passo, a especificação do ambiente,
+os diagramas de arquitetura coerentes com o que está de fato implementado e um histórico de
+versões inteligível. Como se demonstra ao longo deste trabalho, a tentativa de
+\emph{clonar e executar} os sistemas tal como se encontram esbarra em obstáculos que vão de
+detalhes de configuração a lacunas estruturais, como código-fonte ausente e divergências
+entre o hardware montado e o hardware documentado.
 
 Diante desse quadro, o presente trabalho organiza-se em torno da seguinte questão de
-pesquisa: \emph{de que forma a arquitetura de software do sistema de realidade virtual
-para reabilitação de marcha do Projeto EMA pode ser analisada, documentada e
-reestruturada de modo a desacoplar a lógica de hardware da lógica de interface, viabilizando
-a sua integração com os demais subsistemas de reabilitação e a sua portabilidade entre
-diferentes plataformas?}
+pesquisa: \emph{de que forma o instrumental da Engenharia de Software pode ser aplicado ao
+diagnóstico, à documentação e à reestruturação dos sistemas robóticos de reabilitação do
+Projeto EMA, de modo a reduzir a lacuna entre o que está registrado e o que está montado e
+a viabilizar que um novo integrante seja capaz de reproduzir, compreender e evoluir esses
+sistemas?}
 
 \section{Justificativa}
+\label{sec:justificativa}
 
-A relevância deste trabalho manifesta-se em três dimensões complementares: clínica,
-científica e de engenharia de software.
+A relevância deste trabalho manifesta-se em três dimensões complementares.
 
-Do ponto de vista \textbf{clínico}, aprimorar o sistema de realidade virtual significa
-fortalecer uma ferramenta com potencial terapêutico já documentado. A literatura
-demonstra que a realidade virtual, sobretudo quando combinada à robótica de
-reabilitação e à eletroestimulação funcional, pode aumentar a motivação e a adesão ao
-tratamento e contribuir para melhores desfechos motores \cite{loureiro2024,macchitella2023}.
-Viabilizar a integração entre o ambiente virtual, o andador robótico, a esteira e a FES
-aproxima o laboratório de um protocolo de reabilitação mais rico e imersivo, em
-benefício direto de pacientes com comprometimento de marcha.
+Do ponto de vista da \textbf{Engenharia de Software} --- área de formação dos autores ---,
+o laboratório oferece um cenário real, com legado e restrições concretos, no qual
+princípios consagrados da disciplina podem ser aplicados e avaliados. A separação de
+interesses, o baixo acoplamento, a documentação arquitetural e o versionamento disciplinado
+são reconhecidos como determinantes da manutenibilidade e da longevidade de sistemas de
+software \cite{sommerville2011}. Atuar sobre esses aspectos, com postura de \emph{arquiteto
+de software} --- e não apenas de programador ---, é precisamente onde um trabalho da área
+pode oferecer a maior contribuição a um laboratório historicamente centrado no hardware e
+na pesquisa aplicada.
 
-Do ponto de vista \textbf{científico}, o Projeto EMA é uma iniciativa de pesquisa de
-longa duração, conduzida por sucessivas gerações de estudantes de graduação e
-pós-graduação. A continuidade desse esforço depende criticamente da capacidade de cada
-nova geração compreender e construir sobre o trabalho das anteriores. Sem documentação e
-sem uma arquitetura inteligível, cada transição de equipe implica retrabalho e perda de
-conhecimento. Estruturar e documentar o sistema é, portanto, condição para a
-sustentabilidade da própria linha de pesquisa.
+Do ponto de vista \textbf{científico}, o Projeto EMA é uma iniciativa de longa duração,
+conduzida por sucessivas gerações de estudantes. A continuidade desse esforço depende
+criticamente da capacidade de cada nova geração compreender e construir sobre o trabalho
+das anteriores. Sem documentação e sem uma arquitetura inteligível, cada transição de
+equipe implica retrabalho e perda de conhecimento --- um custo que a alta rotatividade
+característica de um laboratório acadêmico apenas amplifica. Estruturar, documentar e
+diagnosticar os sistemas é, assim, condição para a sustentabilidade das próprias linhas de
+pesquisa.
 
-Do ponto de vista da \textbf{engenharia de software} --- área de formação deste trabalho
----, o maior gargalo do sistema atual não está na falta de funcionalidade, mas na
-\emph{forma como o software está estruturado}. Princípios consagrados da disciplina,
-como a separação de interesses, o baixo acoplamento e a documentação arquitetural, são
-reconhecidos como determinantes da manutenibilidade e da longevidade de sistemas de
-software \cite{sommerville2011}. Atuar sobre esses aspectos, com postura de arquiteto de
-software --- e não apenas de programador ---, é precisamente onde um trabalho de
-Engenharia de Software pode oferecer a maior contribuição ao laboratório: transformar um
-protótipo funcional, porém frágil, em uma base de software documentada, padronizada e
-preparada para evoluir. Trata-se, ademais, de um cenário real, com restrições e legado
-concretos, o que confere validade prática às decisões arquiteturais propostas.
+Do ponto de vista \textbf{clínico}, os sistemas em questão são ferramentas com potencial
+terapêutico documentado. A literatura demonstra que a realidade virtual e a
+eletroestimulação funcional, sobretudo quando combinadas à robótica de reabilitação, podem
+aumentar a motivação e a adesão ao tratamento e contribuir para melhores desfechos motores
+\cite{loureiro2024,macchitella2023}. Recuperar e consolidar essas ferramentas em bases de
+software confiáveis aproxima o laboratório de protocolos de reabilitação mais ricos, em
+benefício direto dos pacientes.
 
 \section{Objetivos}
+\label{sec:objetivos}
 
 \subsection{Objetivo Geral}
 
-Analisar, documentar e propor uma arquitetura de software para o sistema de realidade
-virtual de reabilitação de marcha do Projeto EMA que promova o desacoplamento entre a
-lógica de hardware e a lógica de interface e que viabilize a integração do sistema com
-os demais subsistemas de reabilitação, bem como a sua portabilidade entre diferentes
-plataformas de hardware e \emph{software}.
+Aplicar o instrumental da Engenharia de Software ao diagnóstico, à documentação e à
+proposta de reestruturação dos sistemas robóticos de reabilitação do Projeto EMA, tomando
+como estudos de caso o sistema de realidade virtual e o sistema de ciclismo com
+eletroestimulação funcional, de modo a reduzir a lacuna entre o que está registrado e o que
+está montado e a viabilizar a sua reprodução, compreensão e evolução.
 
 \subsection{Objetivos Específicos}
 
 Para o alcance do objetivo geral, definem-se os seguintes objetivos específicos:
 
 \begin{itemize}
-	\item revisar a literatura sobre realidade virtual aplicada à reabilitação de
-	      marcha, com atenção às formas de visualização do movimento e à sua combinação
-	      com eletroestimulação funcional e robótica assistiva;
-	\item levantar e documentar a arquitetura atual (\emph{as-is}) do sistema de
-	      realidade virtual legado, incluindo seus componentes, o fluxo de dados dos
-	      sensores inerciais até o avatar e o mecanismo de comunicação entre o
-	      \emph{middleware} robótico e a \emph{engine};
-	\item identificar os pontos de acoplamento, as limitações e os riscos
-	      arquiteturais do sistema legado;
-	\item propor uma arquitetura-alvo (\emph{to-be}) que desacople a lógica de hardware
-	      da lógica de interface, com nós de software agnósticos à \emph{engine} e uma
-	      camada de comunicação padronizada;
-	\item delinear um caminho de migração do sistema legado para um conjunto
-	      tecnológico padronizado, alinhado às plataformas adotadas pelos grupos de
-	      pesquisa parceiros;
-	\item produzir a documentação e os modelos arquiteturais correspondentes
-	      (diagramas de componentes, de implantação, de sequência e de casos de uso) que
-	      sirvam de base para a implementação a ser conduzida em etapa posterior.
+	\item revisar a literatura sobre boas práticas de Engenharia de Software aplicáveis a
+	      sistemas embarcados e robóticos, com ênfase em refatoração, documentação técnica,
+	      versionamento e arquitetura baseada em componentes;
+	\item levantar e documentar a arquitetura atual (\emph{as-is}) de cada um dos dois
+	      sistemas, reconstruindo, por análise documental e de código, os seus componentes
+	      e fluxos de dados;
+	\item confrontar o que está registrado (artigos, diagramas e trabalhos anteriores) com
+	      o que está de fato montado e em operação, mapeando as lacunas e as incoerências;
+	\item diagnosticar as limitações de Engenharia de Software comuns aos dois sistemas,
+	      em especial as relativas à organização dos repositórios, à documentação e à
+	      reprodutibilidade;
+	\item produzir os modelos e diagramas de arquitetura padronizados que representem os
+	      sistemas de forma coerente;
+	\item propor recomendações e um caminho de reestruturação --- de padronização de
+	      repositórios e documentação a modularização e desacoplamento --- que preparem o
+	      terreno para a etapa de integração a ser conduzida em trabalho posterior.
 \end{itemize}
 
 \section{Metodologia}
+\label{sec:metodologia-intro}
 
-Quanto à sua natureza, este trabalho caracteriza-se como uma \emph{pesquisa aplicada},
-de caráter \emph{exploratório} e abordagem predominantemente \emph{qualitativa}, voltada
-à compreensão e à reestruturação de um sistema de software existente em um contexto real
-de pesquisa. Por se tratar da primeira etapa de um trabalho de conclusão de curso
-desenvolvido em duas fases, o escopo aqui delimitado é teórico e preparatório: concentra-se
-na fundamentação, no diagnóstico e na proposta de arquitetura, ficando a implementação e
-a validação experimental reservadas à etapa subsequente.
-
-O desenvolvimento foi organizado nas seguintes fases metodológicas:
-
-\begin{enumerate}
-	\item \textbf{Revisão bibliográfica:} levantamento e leitura crítica da literatura
-	      sobre reabilitação de marcha, realidade virtual aplicada à saúde,
-	      eletroestimulação funcional, robótica assistiva e fundamentos de arquitetura de
-	      software, com o objetivo de embasar teoricamente as decisões de projeto;
-	\item \textbf{Análise documental e de código do sistema legado:} exame dos
-	      repositórios, dos artefatos e da documentação existente do sistema de realidade
-	      virtual do Projeto EMA, por meio de leitura de código e de engenharia reversa,
-	      a fim de reconstruir e documentar a sua arquitetura atual;
-	\item \textbf{Modelagem arquitetural:} representação formal das arquiteturas
-	      \emph{as-is} e \emph{to-be} mediante diagramas em notação \emph{UML} e diagramas
-	      de arquitetura (componentes, implantação, sequência e casos de uso),
-	      adotando-se as boas práticas de documentação de software \cite{sommerville2011};
-	\item \textbf{Proposta de arquitetura e caminho de migração:} a partir do
-	      diagnóstico, elaboração de uma arquitetura desacoplada e padronizada e a
-	      definição das etapas necessárias à sua adoção, considerando o legado e as
-	      restrições do laboratório.
-\end{enumerate}
+Quanto à sua natureza, este trabalho caracteriza-se como uma \emph{pesquisa aplicada}, de
+caráter \emph{exploratório} e abordagem predominantemente \emph{qualitativa}, voltada à
+compreensão e à reestruturação de sistemas de software existentes em um contexto real de
+pesquisa. Adota-se uma postura de \emph{consultoria de Engenharia de Software}: os autores
+posicionam-se como engenheiros que, ao chegarem ao laboratório, recebem acesso aos
+repositórios e à infraestrutura e se propõem a reproduzir os sistemas tal como se
+encontram, registrando sistematicamente os obstáculos e as lacunas encontrados. O
+detalhamento dessa abordagem é apresentado no Capítulo~\ref{cap:metodologia}.
 
 \section{Organização do Trabalho}
+\label{sec:organizacao}
 
-Além desta introdução, este trabalho está organizado em mais cinco capítulos. O
-Capítulo~\ref{cap:fundamentacao} apresenta a \emph{fundamentação teórica}, abordando a
-reabilitação de marcha, a realidade virtual e suas variações, a sua aplicação à
-reabilitação, a eletroestimulação funcional e a robótica assistiva, a captura de
-movimento por sensores inerciais e os fundamentos de engenharia de software pertinentes.
-O Capítulo~\ref{cap:revisao} reúne a \emph{revisão da literatura e os trabalhos
-relacionados}, sistematizando o estado da arte e identificando as lacunas que
-contextualizam esta proposta. O Capítulo~\ref{cap:diagnostico} apresenta o
-\emph{diagnóstico do sistema legado}, documentando a sua arquitetura atual e as
-limitações identificadas. O Capítulo~\ref{cap:proposta} descreve a \emph{proposta de
-arquitetura}, com o desacoplamento entre hardware e \emph{engine}, a padronização da
-comunicação, os cenários de uso e o caminho de migração. Por fim, o
-Capítulo~\ref{cap:consideracoes} traz as \emph{considerações finais}, retomando as
-contribuições, as limitações e os trabalhos futuros.
+Além desta introdução, o trabalho está organizado em mais sete capítulos. O
+Capítulo~\ref{cap:fundamentacao} apresenta a \emph{fundamentação teórica}, começando pelas
+boas práticas de Engenharia de Software para sistemas embarcados --- refatoração,
+documentação técnica, versionamento e arquitetura baseada em componentes (ROS) --- e
+delimitando, em seguida, os fundamentos de domínio (reabilitação, realidade virtual,
+eletroestimulação e sensoriamento inercial). O Capítulo~\ref{cap:metodologia} descreve a
+\emph{metodologia da consultoria} adotada para o diagnóstico. Os
+Capítulos~\ref{cap:caso-vr} e \ref{cap:caso-trike} apresentam, respectivamente, os
+\emph{estudos de caso} da realidade virtual e do ciclismo com eletroestimulação, com a
+documentação da arquitetura atual, as tentativas de reprodução e as limitações específicas
+de cada um. O Capítulo~\ref{cap:diagnostico} consolida o \emph{diagnóstico dos problemas
+comuns}, com destaque para a organização do versionamento e a documentação. O
+Capítulo~\ref{cap:proposta} reúne as \emph{recomendações e o caminho de reestruturação}
+propostos. Por fim, o Capítulo~\ref{cap:consideracoes} traz as \emph{considerações finais},
+retomando as contribuições, as limitações e os trabalhos futuros.

@@ -1,86 +1,255 @@
 \chapter{Fundamentação Teórica}
 \label{cap:fundamentacao}
 
-Este capítulo reúne os fundamentos teóricos que sustentam o trabalho. Parte-se dos
-mecanismos neurofisiológicos que justificam a reabilitação de marcha e do papel da
-neuroplasticidade (Seção~\ref{sec:neuroplasticidade}); em seguida, delimitam-se os
-conceitos de realidade virtual, aumentada e mista (Seção~\ref{sec:rv-ra-rm}) e a sua
-aplicação à reabilitação (Seção~\ref{sec:rv-reabilitacao}). Por fim, abordam-se a
-eletroestimulação funcional e a robótica assistiva, a captura de movimento por sensores
-inerciais e os fundamentos de engenharia de software pertinentes ao diagnóstico e à
-proposta de arquitetura desenvolvidos nos capítulos seguintes.
+Este capítulo reúne os fundamentos que sustentam o trabalho, organizados do geral para o
+específico, conforme a natureza da contribuição proposta. Parte-se das boas práticas de
+Engenharia de Software aplicáveis a sistemas embarcados e robóticos
+(Seção~\ref{sec:es-embarcados}), passando pela refatoração
+(Seção~\ref{sec:refatoracao}), pela documentação técnica (Seção~\ref{sec:documentacao}),
+pelo versionamento e organização de repositórios (Seção~\ref{sec:versionamento}) e pela
+arquitetura baseada em componentes materializada no ROS (Seção~\ref{sec:ros}). Por fim,
+delimitam-se os fundamentos de domínio (Seção~\ref{sec:dominio}) --- reabilitação,
+realidade virtual, eletroestimulação e sensoriamento inercial --- na medida necessária
+para compreender os dois estudos de caso.
 
-\section{Reabilitação de Marcha e Neuroplasticidade}
+\section{Engenharia de Software para Sistemas Embarcados e Robóticos}
+\label{sec:es-embarcados}
+
+A Engenharia de Software é a disciplina que se ocupa da produção de software de qualidade,
+dentro de prazos e custos previsíveis, ao longo de todo o seu ciclo de vida
+\cite{sommerville2011}. Um princípio central da disciplina é o de que o custo dominante de
+um sistema não está na sua construção inicial, mas na sua \emph{evolução} --- as
+sucessivas alterações necessárias para corrigir defeitos, adaptar-se a novos ambientes e
+incorporar requisitos. Atributos como manutenibilidade, modularidade e baixo acoplamento,
+portanto, não são refinamentos estéticos, mas determinantes diretos do custo e da
+viabilidade de manter um sistema vivo ao longo do tempo.
+
+Esses princípios assumem contornos particulares quando o software é \emph{embarcado} e
+\emph{robótico}, como é o caso dos sistemas do Projeto EMA. Nesse domínio, o software não
+existe isoladamente: ele controla e é controlado por hardware --- sensores, atuadores,
+microcontroladores --- sujeito a restrições de tempo real, de segurança e de recursos
+computacionais limitados. Um comando enviado a um estimulador elétrico ou a leitura de um
+sensor inercial têm consequências físicas imediatas, o que eleva a criticidade de falhas.
+Ao mesmo tempo, sistemas robóticos são intrinsecamente distribuídos e heterogêneos, o que
+torna a modularidade e a padronização das interfaces entre componentes uma necessidade, e
+não uma opção.
+
+Um agravante recorrente em laboratórios de pesquisa é a tensão entre a cultura de
+prototipagem rápida --- orientada a demonstrar viabilidade e produzir resultados
+publicáveis --- e as boas práticas de engenharia que garantem a longevidade do software. O
+protótipo que ``funciona uma vez'' cumpre o seu papel científico imediato, mas, na ausência
+de documentação, testes e organização, converte-se em um passivo técnico
+(\emph{technical debt}) que onera todas as gerações seguintes. As seções a seguir
+apresentam o instrumental que este trabalho mobiliza para diagnosticar e reduzir esse
+passivo: refatoração, documentação, versionamento e arquitetura baseada em componentes.
+
+\section{Refatoração}
+\label{sec:refatoracao}
+
+Refatoração é o processo de alterar a estrutura interna de um software sem modificar o seu
+comportamento externo observável, com o objetivo de torná-lo mais simples, legível e
+manutenível \cite{fowler2018}. Trata-se de uma disciplina de melhoria contínua: em vez de
+uma reescrita monolítica e arriscada, aplicam-se transformações pequenas e verificáveis que
+preservam a funcionalidade enquanto aprimoram o desenho. Cada projeto possui
+características próprias, mas um repertório consagrado de técnicas orienta essas
+transformações; a seguir, destacam-se as mais pertinentes ao contexto deste trabalho.
+
+\subsection{Composição de Métodos}
+
+Um primeiro grupo de técnicas organiza o corpo das funções. \emph{Extrair Método}
+(\emph{Extract Method}) transforma um fragmento de código coeso em um método próprio, com
+nome descritivo, elevando a legibilidade e favorecendo o reúso; \emph{Embutir Método}
+(\emph{Inline Method}) faz o inverso, eliminando indireções desnecessárias quando o corpo
+de um método é tão evidente quanto o seu nome. De forma análoga, \emph{Extrair Variável}
+(\emph{Extract Variable}) atribui a uma variável bem nomeada o resultado de uma expressão
+complexa, tornando explícita a sua intenção.
+
+\subsection{Movimentação de Recursos entre Objetos}
+
+Quando as responsabilidades estão mal distribuídas, técnicas de movimentação reequilibram o
+desenho. \emph{Mover Método/Campo} (\emph{Move Method/Field}) desloca um membro para a
+classe que dele mais se beneficia; \emph{Extrair Classe} (\emph{Extract Class}) cria uma
+nova classe quando uma única passa a acumular responsabilidades que seriam de duas. Esse
+princípio de agrupar responsabilidades afins é diretamente análogo à forma como o ROS
+organiza a computação em \emph{nós} especializados, cada qual responsável por uma parte bem
+delimitada do sistema.
+
+\subsection{Simplificação de Expressões Condicionais}
+
+A complexidade condicional é uma fonte frequente de defeitos. \emph{Decompor Condicional}
+(\emph{Decompose Conditional}) extrai a condição e as ações de ramificações complexas para
+métodos nomeados; \emph{Consolidar Expressão Condicional} unifica verificações sucessivas
+que conduzem ao mesmo resultado; \emph{Substituir Condicional por Polimorfismo} troca
+seleções por tipo (por exemplo, um \texttt{switch}) por herança e polimorfismo; e as
+\emph{Cláusulas de Guarda} (\emph{Guard Clauses}) tratam casos excepcionais com retornos
+antecipados, mantendo limpo o ``caminho feliz'' da função. Em Python --- linguagem
+predominante nos nós do EMA ---, tais técnicas reduzem o aninhamento e o excesso de
+condicionais, alinhando-se à ênfase da linguagem em legibilidade.
+
+\subsection{Organização de Dados}
+
+Por fim, técnicas de organização de dados aumentam a clareza e a segurança do código.
+\emph{Substituir Número Mágico por Constante} elimina valores literais soltos em favor de
+constantes descritivas, e \emph{Encapsular Campo} restringe o acesso direto a atributos por
+meio de métodos, controlando as invariantes do objeto. Em sistemas de reabilitação, nos
+quais parâmetros como limiares de corrente e faixas angulares têm significado clínico
+preciso, nomear e encapsular esses valores é também uma medida de segurança.
+
+\subsection{Quando (e Quando Não) Refatorar}
+
+A refatoração é mais eficaz quando integrada à rotina de desenvolvimento, e não tratada
+como um evento isolado. A \emph{Regra do Escoteiro} sintetiza essa postura: deixar o código
+mais limpo do que se o encontrou. Oportunidades naturais surgem ao adicionar
+funcionalidades, ao corrigir defeitos e durante revisões de código. Um pressuposto
+importante, contudo, é a existência de uma rede de segurança que garanta a preservação do
+comportamento: sem testes automatizados, refatorar aproxima-se de ``mudar o código e
+torcer''. O ciclo de Desenvolvimento Orientado a Testes (\emph{Test-Driven Development},
+TDD) --- escrever um teste que falha, fazê-lo passar com o código mais simples possível e,
+então, refatorar \cite{beck2003} --- oferece essa rede. Há, ainda, situações em que
+refatorar é desaconselhável: nas proximidades de um prazo, pelo risco de introduzir
+defeitos; e quando o código está tão comprometido, ou desprovido de testes, que a
+reescrita se torna preferível --- afinal, a refatoração pressupõe que o sistema atual
+funcione.
+
+\section{Documentação Técnica}
+\label{sec:documentacao}
+
+Para os sistemas em estudo, a documentação é a maior carência isolada. Historicamente,
+adotou-se no laboratório a premissa implícita de que ``o código é a documentação'' ---
+premissa que se revela insuficiente quando um novo integrante precisa instalar, executar e
+compreender o sistema a partir do zero. Esta seção apresenta os arcabouços que orientam uma
+documentação intencional e sustentável.
+
+\subsection{Arquitetura de Conteúdo: o Arcabouço Diátaxis}
+
+O arcabouço \emph{Diátaxis} organiza a documentação técnica em quatro categorias definidas
+pela necessidade do usuário \cite{diataxis}: \emph{tutoriais}, orientados ao aprendizado,
+que conduzem o iniciante por um percurso passo a passo; \emph{guias de como fazer}
+(\emph{how-to guides}), orientados a resolver tarefas específicas; \emph{referência},
+orientada à informação precisa (parâmetros, APIs, formatos de dados); e
+\emph{explicação}, orientada à compreensão dos conceitos e das decisões de projeto. A
+distinção é útil porque cada categoria falha quando mistura propósitos --- um tutorial
+sobrecarregado de detalhes de referência, por exemplo, deixa de cumprir o seu papel
+didático. Para um laboratório com alta rotatividade, os tutoriais e os guias de instalação
+são precisamente os artefatos cuja ausência mais onera a integração de novos membros.
+
+\subsection{Documentação de Arquitetura: Modelo C4 e ADR}
+
+A comunicação da arquitetura beneficia-se de notações padronizadas. O \emph{Modelo C4}
+propõe descrever a arquitetura em quatro níveis de abstração progressivos --- Contexto,
+Contêineres, Componentes e Código ---, permitindo ``dar zoom'' do panorama geral ao detalhe
+conforme a audiência \cite{c4model}. Complementarmente, os \emph{Registros de Decisão de
+Arquitetura} (\emph{Architecture Decision Records}, ADR) documentam, de forma incremental e
+datada, as decisões arquiteturais relevantes, o contexto em que foram tomadas e as suas
+consequências \cite{adr}. Os ADR são especialmente valiosos em projetos de longa duração,
+pois preservam o \emph{porquê} das escolhas --- conhecimento que, de outro modo, se perde a
+cada transição de equipe.
+
+\subsection{Documentação como Código e Documentação Viva}
+
+Duas abordagens operacionais aumentam a probabilidade de a documentação permanecer
+atualizada. A \emph{documentação como código} (\emph{docs-as-code}) trata os artefatos de
+documentação com o mesmo rigor do código-fonte: escritos em linguagens de marcação leve
+(como Markdown), versionados em Git, submetidos a revisão por pares e publicados por
+pipelines automatizados. A \emph{documentação viva} (\emph{living documentation}) gera parte
+da documentação diretamente a partir do código ou de testes executáveis, reduzindo o risco
+de defasagem. Ambas convergem para um mesmo objetivo: fazer da documentação um subproduto
+natural do fluxo de trabalho, e não uma tarefa avulsa e facilmente adiada. Incorporar a
+atualização da documentação à \emph{Definição de Pronto} (\emph{Definition of Done}) de
+cada tarefa é uma prática de governança que reforça essa cultura.
+
+\section{Versionamento e Organização de Repositórios}
+\label{sec:versionamento}
+
+O sistema de controle de versão é, em muitos projetos acadêmicos, a principal --- por vezes
+a única --- memória institucional do software. Ferramentas como o Git, e plataformas como o
+GitHub, oferecem recursos que vão muito além do simples armazenamento de arquivos:
+organização por equipes, rastreamento de tarefas e defeitos (\emph{issues}), fluxos de
+revisão por \emph{pull request}, marcação de versões (\emph{releases}) e integração
+contínua. O uso disciplinado desses recursos --- convenções de nomenclatura de
+repositórios, presença de arquivos \texttt{README} e de licença, histórico de \emph{commits}
+inteligível e separação clara entre código ativo e arquivado --- é o que permite que o
+conhecimento produzido seja localizável e reaproveitável.
+
+A ausência dessas convenções produz o quadro oposto: repositórios duplicados para o mesmo
+projeto, nomes que não comunicam propósito, misturas entre trabalhos originais e cópias, e
+código sem qualquer ponto de entrada documentado. Como se detalha no
+Capítulo~\ref{cap:diagnostico}, esse é exatamente o cenário observado na organização do
+laboratório, e constitui uma das lacunas de Engenharia de Software mais custosas ---
+justamente por ser das mais simples de corrigir com boas práticas.
+
+\section{Arquitetura Baseada em Componentes e o ROS}
+\label{sec:ros}
+
+A Engenharia de Software Baseada em Componentes (\emph{Component-Based Software
+Engineering}, CBSE) propõe construir sistemas pela composição de partes independentes e
+substituíveis, que interagem por meio de interfaces bem definidas. O \emph{Robot Operating
+System} (ROS) é a materialização desse paradigma no domínio da robótica: não um sistema
+operacional no sentido estrito, mas um \emph{middleware} que organiza a computação em
+\emph{nós} --- processos especializados e independentes --- que se comunicam por um modelo
+de \emph{publicação/assinatura} (\emph{publish/subscribe}) sobre \emph{tópicos}
+nomeados \cite{ros2docs}. Essa arquitetura favorece diretamente o baixo acoplamento: um nó
+pode ser desenvolvido, testado, substituído ou reescrito sem afetar os demais, desde que
+preserve o contrato das mensagens que troca.
+
+O ROS~2, adotado como alvo pelo laboratório, assenta a sua comunicação sobre o padrão
+\emph{Data Distribution Service} (DDS). Dessa escolha decorrem duas propriedades relevantes
+para sistemas de reabilitação. A primeira é a \emph{descoberta automática} de nós: sem a
+necessidade de um nó mestre central, os participantes localizam-se na rede e passam a
+comunicar-se de forma descentralizada. A segunda são as políticas de \emph{Qualidade de
+Serviço} (\emph{Quality of Service}, QoS), que permitem ajustar a comunicação à criticidade
+de cada fluxo de dados. Assim, a telemetria de um sensor inercial, contínua e tolerante a
+perdas, pode ser configurada como \emph{best effort} (privilegiando a velocidade), ao passo
+que um comando enviado ao estimulador elétrico, que não pode ser perdido, é configurado
+como \emph{reliable} (garantindo a entrega). Sobre esses mesmos mecanismos é possível
+construir salvaguardas de segurança --- por exemplo, associar um tempo de validade
+(\emph{lifespan}) e sinais de vivacidade (\emph{liveliness}) aos comandos críticos, de modo
+que o driver do estimulador entre em modo seguro caso deixe de receber comandos válidos do
+nó de controle. Esses conceitos são retomados na análise do estudo de caso do ciclismo com
+eletroestimulação (Capítulo~\ref{cap:caso-trike}).
+
+\section{Fundamentos de Domínio}
+\label{sec:dominio}
+
+Delimitados os fundamentos de Engenharia de Software, esta seção apresenta o domínio de
+aplicação na extensão necessária para compreender os dois estudos de caso: a reabilitação
+de marcha e a neuroplasticidade, a realidade virtual e a sua aplicação terapêutica, a
+eletroestimulação funcional aplicada ao ciclismo e a captura de movimento por sensores
+inerciais.
+
+\subsection{Reabilitação de Marcha e Neuroplasticidade}
 \label{sec:neuroplasticidade}
 
 A marcha humana é uma tarefa motora complexa, resultante da coordenação fina entre o
 sistema nervoso central, o sistema musculoesquelético e a integração contínua de
-informações sensoriais. Lesões neurológicas como o acidente vascular cerebral (AVC) e a
-lesão medular interrompem, em graus variados, o controle dessa tarefa, comprometendo a
-locomoção e a autonomia do indivíduo. A reabilitação de marcha busca restaurar essa
+informações sensoriais. Lesões neurológicas como o AVC e a lesão medular interrompem, em
+graus variados, o controle dessa tarefa. A reabilitação de marcha busca restaurar essa
 capacidade explorando um princípio fundamental do sistema nervoso: a sua plasticidade.
-
 Entende-se por \emph{neuroplasticidade} a capacidade do sistema nervoso de reorganizar a
-sua estrutura e a sua função em resposta à experiência. É esse fenômeno que fundamenta a
-recuperação motora após uma lesão neurológica e que sustenta a própria racionalidade das
-terapias de reabilitação. \citeonline{kleim2008} sistematizam esse conhecimento em um
-conjunto de princípios da plasticidade neural dependente de experiência, entre os quais
-se destacam a especificidade do treino (a natureza da experiência determina a natureza da
-adaptação neural), a importância da repetição e da intensidade (a plasticidade requer
-prática suficientemente repetida e intensa), a relevância da saliência do estímulo (a
-experiência precisa ser significativa para o indivíduo) e a influência do tempo e da
-idade sobre o processo. Esses princípios oferecem o alicerce neurocientífico que explica
-\emph{por que} um treino motor intensivo, repetitivo e engajador é capaz de promover
-recuperação funcional.
+sua estrutura e a sua função em resposta à experiência. \citeonline{kleim2008}
+sistematizam esse conhecimento em princípios da plasticidade dependente de experiência,
+entre os quais a especificidade do treino, a importância da repetição e da intensidade e a
+relevância da saliência do estímulo. Esses princípios explicam \emph{por que} um treino
+motor intensivo, repetitivo e engajador promove recuperação funcional
+\cite{takeuchi2013}. É justamente sobre esses fatores --- repetição, intensidade e
+saliência --- que operam as tecnologias assistivas discutidas a seguir
+\cite{rajashekar2024,macchitella2023}.
 
-No contexto específico da recuperação motora após o AVC, \citeonline{takeuchi2013}
-revisam os mecanismos de neuroplasticidade envolvidos e as estratégias terapêuticas que
-os exploram. Os autores destacam que a recuperação depende da reorganização de redes
-neurais preservadas e que abordagens baseadas em prática orientada à tarefa, com elevado
-número de repetições, tendem a produzir melhores desfechos. Ressaltam, contudo, um
-desafio prático recorrente: a dificuldade de sustentar, na terapia convencional, o volume
-e a intensidade de treino exigidos para desencadear a plasticidade, sobretudo quando o
-tratamento se estende por longos períodos e depende da motivação do paciente.
-
-É justamente nesse ponto que as tecnologias assistivas se articulam com os princípios da
-neuroplasticidade. Ao permitirem a prática repetida de tarefas motoras em ambientes
-controlados, ricos em realimentação sensorial e capazes de sustentar o engajamento, a
-realidade virtual, a robótica de reabilitação e a eletroestimulação funcional operam
-diretamente sobre os fatores que a literatura identifica como determinantes da adaptação
-neural --- repetição, intensidade e saliência \cite{rajashekar2024,macchitella2023}. A
-fundamentação dessas tecnologias, a começar pela realidade virtual, é o objeto das seções
-seguintes.
-
-\section{Realidade Virtual, Aumentada e Mista}
+\subsection{Realidade Virtual, Aumentada e Mista}
 \label{sec:rv-ra-rm}
 
-A realidade virtual (RV) pode ser definida como o uso de computação gráfica interativa
-para gerar ambientes tridimensionais nos quais o usuário percebe estar imerso e com os
-quais é capaz de interagir em tempo real. Dois conceitos são centrais para caracterizar
-essa experiência e são frequentemente tratados como sinônimos, embora descrevam dimensões
-distintas: a imersão e a presença. Segundo \citeonline{slater1997}, a \emph{imersão} é uma
-propriedade objetiva do sistema tecnológico --- o grau em que os dispositivos de exibição
-e de rastreamento são capazes de substituir os estímulos do mundo real por estímulos
-gerados por computador ---, ao passo que a \emph{presença} é o estado subjetivo
-resultante, a sensação psicológica de \emph{estar} no ambiente virtual. Um sistema de
-maior imersão tende a favorecer a presença, mas esta última depende também de fatores
-perceptivos e cognitivos do usuário. Essa distinção é relevante para a reabilitação:
-justifica, em termos técnicos, por que dispositivos de maior imersão --- como os capacetes
-de realidade virtual (\emph{head-mounted displays}, HMD) com rastreamento de movimento ---
-podem sustentar experiências terapêuticas mais engajadoras.
+A realidade virtual (RV) pode ser definida como o uso de computação gráfica interativa para
+gerar ambientes tridimensionais nos quais o usuário percebe estar imerso e com os quais
+interage em tempo real. Dois conceitos caracterizam essa experiência: segundo
+\citeonline{slater1997}, a \emph{imersão} é uma propriedade objetiva do sistema --- o grau
+em que os dispositivos substituem os estímulos reais por estímulos sintéticos ---, ao passo
+que a \emph{presença} é o estado subjetivo resultante, a sensação de \emph{estar} no
+ambiente virtual. Para situar a RV em relação a tecnologias correlatas, é clássica a
+taxonomia de \citeonline{milgram1994}, que organiza as combinações entre elementos reais e
+virtuais ao longo de um \emph{continuum realidade--virtualidade}, ilustrado na
+Figura~\ref{fig:continuum}.
 
-Para situar a RV em relação a tecnologias correlatas, é clássica a taxonomia proposta por
-\citeonline{milgram1994}, que organiza as diferentes combinações entre elementos reais e
-virtuais ao longo de um \emph{continuum realidade--virtualidade}. Em um extremo situa-se o
-ambiente real, composto exclusivamente por objetos físicos; no extremo oposto, o ambiente
-virtual, inteiramente sintético. Entre eles estende-se a \emph{realidade mista} (RM),
-região na qual objetos reais e virtuais coexistem: mais próxima do real, a
-\emph{realidade aumentada} (RA), que sobrepõe elementos virtuais ao mundo físico; mais
-próxima do virtual, a \emph{virtualidade aumentada} (VA), na qual elementos reais são
-incorporados a um ambiente predominantemente sintético. A Figura~\ref{fig:continuum}
-representa esse continuum.
-
-\begin{figure}[htb]
+\begin{figure}[H]
 	\centering
 	\caption{Continuum realidade--virtualidade de Milgram e Kishino.}
 	\label{fig:continuum}
@@ -99,44 +268,31 @@ representa esse continuum.
 	\end{tikzpicture}
 
 	\vspace{4pt}
-	{\footnotesize Fonte: elaborado pelo autor com base em \citeonline{milgram1994}.}
+	{\footnotesize Fonte: elaborado pelos autores com base em \citeonline{milgram1994}.}
 \end{figure}
 
 Embora concebida antes da difusão dos dispositivos atuais, essa taxonomia permanece a
-referência conceitual dominante na área. Trabalhos recentes, entretanto, propõem
-revisitá-la à luz da evolução tecnológica. \citeonline{skarbez2021} argumentam que
-dimensões como a imersão, a coerência e o grau de conhecimento do sistema sobre o ambiente
-real não são plenamente capturadas por um único eixo, sugerindo uma caracterização
-multidimensional da realidade mista. Para os fins deste trabalho, o continuum de
+referência conceitual dominante, ainda que trabalhos recentes proponham revisitá-la à luz
+da evolução tecnológica \cite{skarbez2021}. Para os fins deste trabalho, o continuum de
 \citeonline{milgram1994} é suficiente para posicionar o sistema em estudo: um ambiente
 virtual imersivo, no extremo virtual do continuum, no qual o movimento real do paciente é
-capturado e reproduzido, aproximando a experiência da noção de virtualidade aumentada.
+capturado e reproduzido.
 
-\section{Realidade Virtual Aplicada à Reabilitação}
+\subsection{Realidade Virtual Aplicada à Reabilitação}
 \label{sec:rv-reabilitacao}
 
-A aplicação da realidade virtual à reabilitação motora fundamenta-se na possibilidade de
-oferecer, em ambiente seguro e controlado, prática intensiva e repetitiva de tarefas
-associada a realimentação sensorial enriquecida e a maior engajamento do paciente ---
-precisamente os fatores associados à neuroplasticidade discutidos na
-Seção~\ref{sec:neuroplasticidade}. A magnitude desse benefício, contudo, deve ser
-avaliada com rigor. A revisão sistemática Cochrane conduzida por \citeonline{laver2017},
-que reúne o mais alto nível de evidência sobre o tema, conclui que a realidade virtual não
-é superior à terapia convencional quando empregada isoladamente, mas mostra-se benéfica
-como \emph{adjuvante} a ela, com efeitos mais consistentes quando a intervenção envolve
-maior dose de treino e programas personalizados. Essa conclusão é importante para
-delimitar expectativas: a RV é um recurso potencializador da terapia, e não um substituto
-dela.
+A aplicação da RV à reabilitação motora fundamenta-se na possibilidade de oferecer, em
+ambiente seguro e controlado, prática intensiva e repetitiva associada a realimentação
+sensorial enriquecida --- precisamente os fatores associados à neuroplasticidade. A
+magnitude desse benefício deve ser avaliada com rigor: a revisão sistemática Cochrane de
+\citeonline{laver2017} conclui que a RV não é superior à terapia convencional quando
+empregada isoladamente, mas mostra-se benéfica como \emph{adjuvante}, com efeitos mais
+consistentes sob maior dose de treino. Um aspecto determinante é a forma como o sistema
+apresenta ao usuário o seu próprio movimento --- a \emph{visualização do movimento} ---,
+cujas principais formas, identificadas por \citeonline{ferreiradossantos2016}, a
+Figura~\ref{fig:visualizacao} sintetiza.
 
-Um aspecto determinante para a eficácia dessas intervenções é a forma como o sistema
-apresenta ao usuário o seu próprio movimento --- a \emph{visualização do movimento}. A
-revisão sistemática de \citeonline{ferreiradossantos2016}, dedicada à reabilitação do
-membro inferior em realidade virtual, evidencia que essa representação assume formas
-diversas, desde a reprodução do movimento em um avatar até estratégias baseadas em
-realidade aumentada ou em representações abstratas. A Figura~\ref{fig:visualizacao}
-sintetiza as principais formas de visualização do movimento identificadas na literatura.
-
-\begin{figure}[htb]
+\begin{figure}[H]
 	\centering
 	\caption{Formas de visualização do movimento em realidade virtual.}
 	\label{fig:visualizacao}
@@ -155,44 +311,45 @@ sintetiza as principais formas de visualização do movimento identificadas na l
 	\end{tikzpicture}
 
 	\vspace{4pt}
-	{\footnotesize Fonte: elaborado pelo autor com base em \citeonline{ferreiradossantos2016}.}
+	{\footnotesize Fonte: elaborado pelos autores com base em \citeonline{ferreiradossantos2016}.}
 \end{figure}
 
-A escolha da estratégia de visualização não é neutra: ela influencia a percepção do
-movimento, a sensação de agência e, em última análise, o engajamento e a transferência do
-aprendizado para tarefas funcionais \cite{ferreiradossantos2016,macchitella2023}. O
-sistema de realidade virtual do Projeto EMA, analisado no Capítulo~\ref{cap:diagnostico},
-adota a estratégia baseada em \emph{avatar}, reproduzindo em tempo real o movimento dos
-membros inferiores capturado por sensores inerciais.
+O sistema de RV do Projeto EMA, analisado no Capítulo~\ref{cap:caso-vr}, adota a estratégia
+baseada em \emph{avatar}, reproduzindo em tempo real o movimento dos membros do paciente
+capturado por sensores inerciais. A evidência sobre marcha e equilíbrio reforça o potencial
+da abordagem quando associada a dispositivos de treino locomotor \cite{mirelman2016}, ainda
+que os efeitos sobre parâmetros de marcha permaneçam inconsistentes \cite{lee2024}. Em
+cenários de maior comprometimento, protocolos que associaram RV imersiva, realimentação
+tátil e exoesqueletos controlados por interface cérebro-máquina chegaram a induzir
+recuperação neurológica parcial em pacientes com lesão medular crônica \cite{donati2016}.
 
-No que diz respeito especificamente à marcha e ao equilíbrio, a evidência clínica reforça
-o potencial da abordagem quando associada a outros recursos. O ensaio clínico randomizado
-multicêntrico de \citeonline{mirelman2016}, que combinou treino em esteira a um componente
-de realidade virtual, demonstrou redução significativa do risco de quedas em idosos quando
-comparado ao treino em esteira isolado, evidenciando o valor de integrar a RV a
-dispositivos de treino locomotor --- arranjo diretamente relacionado ao sistema proposto
-neste trabalho. Ainda assim, a maturidade da evidência varia conforme o desfecho. A
-revisão sistemática com metanálise de \citeonline{lee2024} indica que o treino em
-realidade virtual imersiva melhora medidas de equilíbrio em idosos, mas que os efeitos
-sobre parâmetros de marcha permanecem inconsistentes, apontando uma lacuna que motiva a
-continuidade das pesquisas na área.
+\subsection{Eletroestimulação Funcional e Ciclismo Assistido}
+\label{sec:fes}
 
-Por fim, cumpre registrar o alcance terapêutico dessa classe de tecnologias em cenários de
-maior comprometimento. \citeonline{donati2016} relataram que um protocolo de longo prazo
-associando treinamento imersivo em realidade virtual, realimentação tátil e exoesqueletos
-controlados por interface cérebro-máquina foi capaz de induzir recuperação neurológica
-parcial em pacientes com lesão medular crônica --- resultado que ilustra o potencial da
-integração entre realidade virtual, robótica e sinais fisiológicos, horizonte no qual se
-insere o ecossistema do Projeto EMA.
+A eletroestimulação funcional (\emph{Functional Electrical Stimulation}, FES) consiste na
+aplicação de pulsos elétricos a músculos paralisados ou enfraquecidos, provocando
+contrações artificiais capazes de produzir movimento funcional. É a única técnica capaz de
+restaurar movimento em músculos paralisados, permitindo, por exemplo, que indivíduos com
+paraplegia executem o movimento de pedalada em uma bicicleta reclinada \cite{baptista2022}.
+No ciclismo assistido por FES, sensores medem a posição angular dos pedais e, a partir
+dela, determinam quais grupos musculares estimular e em que instante, de modo a produzir
+uma pedalada coordenada. O grupo do LARA acumula experiência consolidada nesse tema,
+inclusive com participação na competição internacional CYBATHLON, tendo desenvolvido desde
+o software embarcado de controle do triciclo \cite{brindeiro2017} até aprimoramentos de
+projeto centrados no usuário e técnicas de estimulação espacialmente distribuídas
+\cite{baptista2022}. Esse sistema constitui o segundo estudo de caso deste trabalho.
 
-\section{Eletroestimulação Funcional e Robótica de Reabilitação}
+\subsection{Captura de Movimento e Sensoriamento Inercial}
+\label{sec:imu}
 
-\section{Captura de Movimento e Sensoriamento Inercial}
-
-\section{Fundamentos de Engenharia de Software}
-
-\subsection{Arquitetura de Software, Acoplamento e Modularidade}
-
-\subsection{Modelagem com UML}
-
-\subsection{Middleware Robótico (ROS)}
+Ambos os estudos de caso dependem da captura do movimento do paciente por
+\emph{unidades de medição inercial} (\emph{Inertial Measurement Units}, IMU) --- sensores
+que combinam acelerômetros, giroscópios e, frequentemente, magnetômetros para estimar a
+orientação de um segmento corporal ou de um componente mecânico no espaço. No sistema de
+RV, as IMUs fixadas aos membros do paciente --- superiores e inferiores --- fornecem as
+orientações que animam, em tempo real, os membros do avatar; no sistema de ciclismo, as IMUs
+estimam a posição angular dos pedais que orienta a máquina de estados da estimulação. Em
+ambos os casos, o
+sensoriamento inercial é a ponte entre o movimento físico real e a lógica de software ---
+razão pela qual a integridade e a documentação dos seus drivers são críticas para a
+reprodução dos sistemas.
