@@ -1,12 +1,15 @@
-# TCC — Genilson (Engenharia de Software, FGA/UnB)
+# TCC — Genilson Silva de Araújo Júnior e Helder Lourenço de Abreu Marques (Engenharia de Software, FGA/UnB)
 
-Repositório do meu Trabalho de Conclusão de Curso, baseado no
-**Template TCC FGA-UnB** (em LaTeX/abnTeX2), desenvolvido pelo professor
-Edson Alves e licenciado em Creative Commons Atribuição 3.0
+Repositório do Trabalho de Conclusão de Curso, desenvolvido em dupla, baseado no
+**Template TCC FGA-UnB** (em LaTeX/abnTeX2), desenvolvido pelo professor Edson Alves
+e licenciado em Creative Commons Atribuição 3.0
 (http://creativecommons.org/licenses/by/3.0/).
 
-> Tema: plataforma de Realidade Virtual para reabilitação de marcha, integrada
-> à robótica assistiva e à Eletroestimulação Funcional (Projeto EMA — LARA/UnB).
+> Tema: **Aplicação de Engenharia de Software em sistemas robóticos de reabilitação do
+> Projeto EMA** (LARA/UnB), a partir de dois estudos de caso — o sistema de **Realidade
+> Virtual** e o de **ciclismo com Eletroestimulação Funcional (FES)**.
+>
+> Orientador: Prof. Dr. Roberto de Souza Baptista.
 
 O build foi **modernizado para `pdflatex` + `latexmk`**, o que permite usar imagens
 **PNG/JPG/PDF** diretamente (o template original, via DVI, só aceitava `.eps`).
@@ -27,7 +30,8 @@ docker compose build latex
 ## Como escrever
 
 - Edite os arquivos em `latex/editaveis/`. A montagem do documento está em `latex/tcc.tex`.
-- Seus dados (autor, título, orientador, etc.) ficam em `latex/editaveis/informacoes.tex`.
+- Os dados do trabalho (autores, título, orientador, banca, etc.) ficam em
+  `latex/editaveis/informacoes.tex`.
 - **Imagens:** coloque os arquivos em `latex/figuras/` e inclua **sem a extensão**:
 
   ```latex
@@ -77,12 +81,11 @@ docker compose run --rm latex make clean
 ```
 latex/
   tcc.tex            # documento principal (ordem das seções)
-  editaveis/         # <- você edita aqui (introdução, capítulos, resumo, etc.)
+  editaveis/         # <- conteúdo editável (introdução, capítulos, resumo, etc.)
   fixos/             # configuração do template (geralmente não mexer)
   figuras/           # imagens (PNG/JPG/PDF; capa.pdf)
   bibliografia.bib   # referências (BibTeX)
   Makefile           # build via latexmk
-build.ps1 / clean.ps1  # atalhos para Windows
+build.ps1 / clean.ps1            # atalhos para Windows
 Dockerfile / docker-compose.yml  # ambiente de compilação
-.ia/                 # contexto local (NÃO versionado)
 ```
