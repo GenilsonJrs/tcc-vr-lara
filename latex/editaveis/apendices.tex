@@ -2,12 +2,44 @@
 
 \partapendices
 
-\chapter{Primeiro Apêndice}
+\chapter{Inventário dos Repositórios do Laboratório no GitHub}
+\label{ap:repos}
 
-Texto do primeiro apêndice.
+Este apêndice detalha o levantamento da organização \texttt{lara-unb} no GitHub que fundamenta
+o diagnóstico apresentado na Seção~\ref{sec:diag-git}. Em uma amostragem de 89 repositórios da
+organização, 77 (aproximadamente 87\%) dispunham de algum arquivo \texttt{README}; a qualidade,
+contudo, é desigual, e alguns dos artefatos mais relevantes --- inclusive os ativos --- carecem
+de documentação adequada. A Tabela~\ref{tab:repos} resume os repositórios diretamente
+relacionados aos dois estudos de caso e a módulos representativos do ecossistema, com o seu
+estado de documentação e de versionamento.
 
-\chapter{Segundo Apêndice}
+\begin{table}[H]
+	\centering
+	\caption{Repositórios do ecossistema EMA e o seu estado de documentação e versionamento.}
+	\label{tab:repos}
+	\scriptsize
+	\begin{tabular}{p{4.4cm} p{1.4cm} p{1.5cm} p{5.0cm}}
+		\hline
+		\textbf{Repositório} & \textbf{Visib.} & \textbf{README} & \textbf{Papel / observação} \\
+		\hline
+		\texttt{ema\_fes\_cycling} & Público & Sim & Ciclismo com FES (ROS~1): \emph{Wiki} com guias, licença Apache~2.0 e \emph{releases}. \\
+		\texttt{ema\_fes\_ros2} & Privado & Mínimo & Reescrita ativa em ROS~2: sem guia, sem licença e sem \emph{releases}. \\
+		\texttt{ema\_vr\_rehab} & Público & Não & Sistema de realidade virtual (Unreal): sem \texttt{README} nem licença; último commit em 2019. \\
+		\texttt{ema\_common\_msgs} & Público & Sim & Mensagens ROS compartilhadas do projeto. \\
+		\texttt{hasomed\_rehastim\_stimulator} & Público & Sim & Driver do eletroestimulador (dependência). \\
+		\texttt{yostlabs\_3space\_imu} & Público & Sim & Driver do sensor inercial (dependência). \\
+		\texttt{Py\_imu}, \texttt{Py\_stimulator}, \texttt{Py\_forcesensor} & Público & Não & Módulos de baixo nível, sem documentação. \\
+		\hline
+	\end{tabular}
 
-Texto do segundo apêndice.
+	\vspace{4pt}
+	{\footnotesize Fonte: elaborado pelos autores a partir da inspeção da organização \texttt{lara-unb} (jul.\ 2026).}
+\end{table}
+
+O quadro evidencia o padrão discutido no Capítulo~\ref{cap:diagnostico}: a documentação
+existente tende a concentrar-se em repositórios de gerações anteriores, ao passo que os
+artefatos ativos --- como a reescrita em ROS~2 do ciclismo e o sistema de realidade virtual ---
+são justamente os que menos dispõem de guias de instalação, licença e histórico de versões
+inteligível.
 
 \end{apendicesenv}
