@@ -1,91 +1,88 @@
-# TCC — Genilson Silva de Araújo Júnior e Helder Lourenço de Abreu Marques (Engenharia de Software, FGA/UnB)
+# Aplicação de Engenharia de Software em Sistemas Robóticos de Reabilitação
 
-Repositório do Trabalho de Conclusão de Curso, desenvolvido em dupla, baseado no
-**Template TCC FGA-UnB** (em LaTeX/abnTeX2), desenvolvido pelo professor Edson Alves
-e licenciado em Creative Commons Atribuição 3.0
-(http://creativecommons.org/licenses/by/3.0/).
+**Estudos de caso em Realidade Virtual e Ciclismo com Eletroestimulação Funcional no Projeto EMA**
 
-> Tema: **Aplicação de Engenharia de Software em sistemas robóticos de reabilitação do
-> Projeto EMA** (LARA/UnB), a partir de dois estudos de caso — o sistema de **Realidade
-> Virtual** e o de **ciclismo com Eletroestimulação Funcional (FES)**.
->
-> Orientador: Prof. Dr. Roberto de Souza Baptista.
+Trabalho de Conclusão de Curso (TCC 1) — **Engenharia de Software**, Faculdade UnB Gama (FGA),
+Universidade de Brasília (UnB). Concluído e defendido em **julho de 2026**.
 
-O build foi **modernizado para `pdflatex` + `latexmk`**, o que permite usar imagens
-**PNG/JPG/PDF** diretamente (o template original, via DVI, só aceitava `.eps`).
+- **Autores:** Genilson Silva de Araújo Júnior · Helder Lourenço de Abreu Marques
+- **Orientador:** Prof. Dr. Roberto de Souza Baptista
+- **Banca:** Prof. Dr. Renato Coral Sampaio · Prof. Dr. Geovany Araújo Borges
 
-## Pré-requisitos
+---
 
-Apenas o **Docker** (Docker Desktop no Windows). Não é preciso instalar LaTeX na
-máquina — toda a compilação roda dentro do container.
+## 📖 Trabalho completo
 
-- Docker: https://docs.docker.com/engine/install/
+<p align="center">
+  <a href="docs/TCC1.pdf">
+    <img src="docs/capa-tcc.png" alt="Capa do TCC — clique para ler o trabalho completo" width="360">
+  </a>
+</p>
 
-Construa a imagem uma vez (ou após mudar o `Dockerfile`):
+<p align="center">
+  <strong><a href="docs/TCC1.pdf">➜ Ler o trabalho completo (PDF, 54 páginas)</a></strong><br>
+  <em>Ao abrir, o GitHub exibe o PDF em um leitor com navegação de páginas; também é possível baixá-lo.</em>
+</p>
 
-```powershell
-docker compose build latex
-```
+---
 
-## Como escrever
+## Resumo
 
-- Edite os arquivos em `latex/editaveis/`. A montagem do documento está em `latex/tcc.tex`.
-- Os dados do trabalho (autores, título, orientador, banca, etc.) ficam em
-  `latex/editaveis/informacoes.tex`.
-- **Imagens:** coloque os arquivos em `latex/figuras/` e inclua **sem a extensão**:
+O **Projeto EMA**, do Laboratório de Automação e Robótica (LARA) da UnB, desenvolve sistemas de
+reabilitação motora que integram eletroestimulação funcional (FES), robótica e realidade virtual.
+Muitos desses sistemas funcionam do ponto de vista da pesquisa, mas apresentam fragilidades
+recorrentes de Engenharia de Software: arquiteturas acopladas, ausência de documentação,
+versionamento desorganizado e uma lacuna sistemática entre o que está **registrado** e o que está
+de fato **montado**.
 
-  ```latex
-  \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figuras/minha-foto}
-    \caption{Descrição da figura}
-    \label{fig:minha-foto}
-  \end{figure}
-  ```
+Este trabalho, de natureza aplicada e diagnóstica, adota uma **postura de consultoria** para
+analisar dois sistemas em estágios opostos de maturidade — o de **Realidade Virtual** (inativo, com
+desafio de reativação) e o de **Ciclismo com FES** (ativo, com desafio de reprodução). Para cada
+caso, documenta-se a arquitetura atual, relata-se a tentativa de reprodução e mapeiam-se as
+limitações; em seguida, consolidam-se os problemas comuns e propõem-se recomendações de
+reestruturação (versionamento, documentação, diagramação e modularização).
 
-  Funciona com `minha-foto.png`, `.jpg` ou `.pdf`.
+**Palavras-chave:** engenharia de software · robótica de reabilitação · documentação · refatoração · Projeto EMA.
 
-## Gerar o PDF
+---
 
-No Windows (PowerShell), a partir da raiz do repositório:
-
-```powershell
-./build.ps1            # compila -> latex/tcc.pdf
-./build.ps1 -Open      # compila e abre o PDF
-./build.ps1 -Clean     # limpa artefatos e recompila do zero
-```
-
-Ou diretamente com Docker (qualquer SO):
-
-```bash
-docker compose run --rm latex make      # gera latex/tcc.pdf
-docker compose up                        # equivalente (usa o command padrão)
-```
-
-O PDF final fica em `latex/tcc.pdf` (uma cópia também é salva como `latex/TCC_FGA.pdf`).
-
-## Limpar arquivos gerados
-
-```powershell
-./clean.ps1
-```
-
-ou
-
-```bash
-docker compose run --rm latex make clean
-```
-
-## Estrutura
+## Estrutura do repositório
 
 ```
+docs/                # PDF final do trabalho e imagens de apresentação
 latex/
   tcc.tex            # documento principal (ordem das seções)
-  editaveis/         # <- conteúdo editável (introdução, capítulos, resumo, etc.)
-  fixos/             # configuração do template (geralmente não mexer)
-  figuras/           # imagens (PNG/JPG/PDF; capa.pdf)
+  editaveis/         # conteúdo dos capítulos, resumo, apêndice, etc.
+  fixos/             # configuração do template (abnTeX2 / FGA)
+  figuras/           # imagens e diagramas
   bibliografia.bib   # referências (BibTeX)
   Makefile           # build via latexmk
 build.ps1 / clean.ps1            # atalhos para Windows
 Dockerfile / docker-compose.yml  # ambiente de compilação
 ```
+
+## Como compilar
+
+Requer apenas **Docker** (não é preciso instalar LaTeX na máquina). A partir da raiz do repositório:
+
+```powershell
+./build.ps1          # compila -> latex/tcc.pdf
+./build.ps1 -Open    # compila e abre o PDF
+./build.ps1 -Clean   # limpa artefatos e recompila do zero
+```
+
+Ou, em qualquer sistema operacional:
+
+```bash
+docker compose run --rm latex make
+```
+
+O documento é escrito em **LaTeX (abnTeX2)**, sobre o Template TCC FGA-UnB desenvolvido pelo
+professor Edson Alves e licenciado em Creative Commons Atribuição 3.0
+(http://creativecommons.org/licenses/by/3.0/). O build foi modernizado para `pdflatex` + `latexmk`.
+
+## Próximos passos (TCC 2)
+
+A continuidade deste trabalho — a implementação das recomendações, a reativação do sistema de
+Realidade Virtual, a reestruturação do Ciclismo com FES e a convergência das duas frentes em um
+ecossistema integrado — será conduzida no **TCC 2**, em repositório próprio.
