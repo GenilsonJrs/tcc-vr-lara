@@ -11,7 +11,7 @@ Universidade de Brasília (UnB). Concluído e defendido em **julho de 2026**.
 
 ---
 
-## 📖 Trabalho completo
+## Trabalho completo
 
 <p align="center">
   <a href="docs/TCC1.pdf">
@@ -20,7 +20,8 @@ Universidade de Brasília (UnB). Concluído e defendido em **julho de 2026**.
 </p>
 
 <p align="center">
-  <strong><a href="docs/TCC1.pdf">➜ Ler o trabalho completo (PDF, 54 páginas)</a></strong><br>
+  <strong><a href="docs/TCC1.pdf">➜ Monografia completa (PDF, 54 páginas)</a></strong> &nbsp;·&nbsp;
+  <strong><a href="docs/apresentacao.pdf">➜ Slides da defesa (PDF)</a></strong><br>
   <em>Ao abrir, o GitHub exibe o PDF em um leitor com navegação de páginas; também é possível baixá-lo.</em>
 </p>
 
