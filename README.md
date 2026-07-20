@@ -13,17 +13,24 @@ Universidade de Brasília (UnB). Concluído e defendido em **julho de 2026**.
 
 ## Trabalho completo
 
-<p align="center">
-  <a href="docs/TCC1.pdf">
-    <img src="docs/capa-tcc.png" alt="Capa do TCC — clique para ler o trabalho completo" width="360">
-  </a>
-</p>
+<table>
+  <tr>
+    <td width="40%" align="center" valign="top">
+      <a href="docs/TCC1.pdf"><img src="docs/capa-tcc.png" alt="Capa da monografia" width="250"></a>
+      <br><br>
+      <strong><a href="docs/TCC1.pdf">➜ Monografia completa</a></strong>
+      <br><sub>PDF · 54 páginas</sub>
+    </td>
+    <td width="60%" align="center" valign="top">
+      <a href="docs/apresentacao.pdf"><img src="docs/capa-apresentacao.png" alt="Capa dos slides da defesa" width="430"></a>
+      <br><br>
+      <strong><a href="docs/apresentacao.pdf">➜ Slides da defesa</a></strong>
+      <br><sub>PDF · 13 slides</sub>
+    </td>
+  </tr>
+</table>
 
-<p align="center">
-  <strong><a href="docs/TCC1.pdf">➜ Monografia completa (PDF, 54 páginas)</a></strong> &nbsp;·&nbsp;
-  <strong><a href="docs/apresentacao.pdf">➜ Slides da defesa (PDF)</a></strong><br>
-  <em>Ao abrir, o GitHub exibe o PDF em um leitor com navegação de páginas; também é possível baixá-lo.</em>
-</p>
+<p align="center"><em>Ao abrir, o GitHub exibe o PDF em um leitor com navegação de páginas; também é possível baixá-lo.</em></p>
 
 ---
 
